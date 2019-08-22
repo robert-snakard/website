@@ -1,0 +1,17 @@
+body {
+	background-color: black;
+}
+
+.hero {
+	height: 100vh;
+	background-image: url("../images/loneliest_road.webp");
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+
+h1 {
+	color: white;
+	text-align: center;
+	line-height: 100vh;
+	font-size: 24px;
+}
