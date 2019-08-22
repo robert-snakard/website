@@ -58,9 +58,27 @@ Make things look pretty
 	height: 100vh;
 }
 
-h1 {
+.button {
+	position: absolute;
+	top: 50vh;
+	left: 47.5vw;
+
+	height: 2em;
+	width: 150px;
+
+	border-width: 2px;
+	border-style: solid;
+	border-color: white;
+	border-radius: 10px;
+
 	color: white;
 	text-align: center;
-	line-height: 100vh;
+	padding-top: 0.75em;
 	font-size: 24px;
+}
+
+.button:hover {
+	border-color: hsl(270, 50%, 38%);
+	color: hsl(270, 50%, 38%);
+	background-color: hsl(300, 5%, 95%);
 }
