@@ -47,23 +47,88 @@ table {
 	border-spacing: 0;
 }
 
+/***********
+my defaults
+***********/
+
+.ralign {
+	text-align: right;
+}
+
 /**********************
 Make things look pretty
 **********************/
+
+body {
+	background-color: black;
+}
+
+/******
+header
+******/
 
 header {
 	height: 15vh;
 	background-color: green;
 }
 
+.nav {
+	font-size: 24px;
+
+	height: 15vh;
+	padding-top: 12.1vh;
+}
+
+.nav a {
+	color: black;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.nav a:hover {
+	background-color: blue;
+}
+
+.logo {
+	float: left;
+
+	font-size: 72px;
+	padding: 28px;
+
+	border-style: solid;
+}
+
+/****
+blog
+****/
+
+section {
+	background-color: red;
+	height: 70vh;
+	width: 60vw;
+
+	margin-left: 20vw;
+}
+
+section p {
+	margin-bottom: 10px;
+}
+
+.disclaimer {
+	font-style: italic;
+}
+
+/******
+footer
+******/
+
 footer {
 	height: 15vh;
 	background-color: green;
 }
 
-section {
-	min-height: 70vh;
-	background-color: red;
+.contact-info {
+	float: middle;
 }
 
 /****************
