@@ -51,13 +51,10 @@ table {
 Make things look pretty
 **********************/
 
-body {
-	background-color: black;
+.hero {
 	background-image: url("../images/loneliest_road.webp");
 	background-size: cover;
-}
 
-.hero {
 	height: 100vh;
 }
 
