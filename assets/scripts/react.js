@@ -12,7 +12,7 @@ class Hero extends React.Component {
 		if (this.state.toggle) {
 			return (
 				<section class="hero">
-				<h1 class="button negative" onClick={() => this.setState({toggle: false})}>Clicked!</h1>
+					<h1 class="button negative" onClick={() => this.setState({toggle: false})}>Clicked!</h1>
 				</section>
 			);
 		}
@@ -26,5 +26,5 @@ class Hero extends React.Component {
 }
 
 // link to the html
-const domContainer = document.querySelector('#react');
+const domContainer = document.querySelector('#splash');
 ReactDOM.render(e(Hero), domContainer);

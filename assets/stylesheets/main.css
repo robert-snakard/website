@@ -51,6 +51,34 @@ table {
 Make things look pretty
 **********************/
 
+header {
+	height: 15vh;
+	background-color: green;
+}
+
+footer {
+	height: 15vh;
+	background-color: green;
+}
+
+section {
+	min-height: 70vh;
+	background-color: red;
+}
+
+/****************
+hero splash page
+****************/
+
+#splash {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	height: 100vh;
+	width: 100vw;
+}
+
 .hero {
 	background-image: url("../images/loneliest_road.webp");
 	background-size: cover;
