@@ -82,3 +82,9 @@ Make things look pretty
 	color: hsl(270, 50%, 38%);
 	background-color: hsl(300, 5%, 95%);
 }
+
+.negative:hover {
+	border-color: hsl(0, 50%, 38%);
+	color: hsl(0, 50%, 38%);
+	background-color: hsl(30, 5%, 95%);
+}
