@@ -10,15 +10,14 @@ class Hero extends React.Component {
 
 	render() {
 		if (this.state.toggle) {
-			return (
-				<section class="hero">
-					<h1 class="button negative" onClick={() => this.setState({toggle: false})}>Clicked!</h1>
-				</section>
-			);
+            return (
+                <section class="hero">
+                </section>
+            );
 		}
 
 		return (
-			<section class="hero">
+			<section class="zero">
 			<h1 class="button" onClick={() => this.setState({toggle: true})}>Going Up</h1>
 			</section>
 		);
