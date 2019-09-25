@@ -1,0 +1,21 @@
+/**************
+ page specific
+**************/
+section {
+    height: 35vh;
+}
+
+h1 {
+    text-align: center;
+    font-size: 26pt;
+}
+
+#message {
+    text-align: center;
+    font-size: 16pt;
+}
+
+#signature {
+    font-style: italic;
+}
+
