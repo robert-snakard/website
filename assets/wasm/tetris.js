@@ -2,7 +2,27 @@
 let wasm;
 
 function __wbg_elem_binding0(arg0, arg1, arg2) {
-    wasm.__wbg_function_table.get(3)(arg0, arg1, arg2);
+    wasm.__wbg_function_table.get(7)(arg0, arg1, arg2);
+}
+
+const heap = new Array(32);
+
+heap.fill(undefined);
+
+heap.push(undefined, null, true, false);
+
+let heap_next = heap.length;
+
+function addHeapObject(obj) {
+    if (heap_next === heap.length) heap.push(heap.length + 1);
+    const idx = heap_next;
+    heap_next = heap[idx];
+
+    heap[idx] = obj;
+    return idx;
+}
+function __wbg_elem_binding1(arg0, arg1, arg2) {
+    wasm.__wbg_function_table.get(3)(arg0, arg1, addHeapObject(arg2));
 }
 /**
 */
@@ -24,23 +44,6 @@ function getStringFromWasm(ptr, len) {
     return cachedTextDecoder.decode(getUint8Memory().subarray(ptr, ptr + len));
 }
 
-const heap = new Array(32);
-
-heap.fill(undefined);
-
-heap.push(undefined, null, true, false);
-
-let heap_next = heap.length;
-
-function addHeapObject(obj) {
-    if (heap_next === heap.length) heap.push(heap.length + 1);
-    const idx = heap_next;
-    heap_next = heap[idx];
-
-    heap[idx] = obj;
-    return idx;
-}
-
 function getObject(idx) { return heap[idx]; }
 
 function dropObject(idx) {
@@ -55,12 +58,12 @@ function takeObject(idx) {
     return ret;
 }
 
-function isLikeNone(x) {
-    return x === undefined || x === null;
-}
-
 function handleError(e) {
     wasm.__wbindgen_exn_store(addHeapObject(e));
+}
+
+function isLikeNone(x) {
+    return x === undefined || x === null;
 }
 
 let WASM_VECTOR_LEN = 0;
@@ -209,6 +212,9 @@ function init(module) {
     imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
         takeObject(arg0);
     };
+    imports.wbg.__wbindgen_cb_forget = function(arg0) {
+        takeObject(arg0);
+    };
     imports.wbg.__wbindgen_cb_drop = function(arg0) {
         const obj = takeObject(arg0).original;
         if (obj.cnt-- == 1) {
@@ -232,9 +238,23 @@ function init(module) {
     imports.wbg.__widl_f_fill_rect_CanvasRenderingContext2D = function(arg0, arg1, arg2, arg3, arg4) {
         getObject(arg0).fillRect(arg1, arg2, arg3, arg4);
     };
+    imports.wbg.__widl_f_fill_text_CanvasRenderingContext2D = function(arg0, arg1, arg2, arg3, arg4) {
+        try {
+            getObject(arg0).fillText(getStringFromWasm(arg1, arg2), arg3, arg4);
+        } catch (e) {
+            handleError(e)
+        }
+    };
     imports.wbg.__widl_f_get_element_by_id_Document = function(arg0, arg1, arg2) {
         const ret = getObject(arg0).getElementById(getStringFromWasm(arg1, arg2));
         return isLikeNone(ret) ? 0 : addHeapObject(ret);
+    };
+    imports.wbg.__widl_f_add_event_listener_with_callback_EventTarget = function(arg0, arg1, arg2, arg3) {
+        try {
+            getObject(arg0).addEventListener(getStringFromWasm(arg1, arg2), getObject(arg3));
+        } catch (e) {
+            handleError(e)
+        }
     };
     imports.wbg.__widl_instanceof_HTMLCanvasElement = function(arg0) {
         const ret = getObject(arg0) instanceof HTMLCanvasElement;
@@ -247,6 +267,19 @@ function init(module) {
         } catch (e) {
             handleError(e)
         }
+    };
+    imports.wbg.__widl_f_set_width_HTMLCanvasElement = function(arg0, arg1) {
+        getObject(arg0).width = arg1 >>> 0;
+    };
+    imports.wbg.__widl_f_set_height_HTMLCanvasElement = function(arg0, arg1) {
+        getObject(arg0).height = arg1 >>> 0;
+    };
+    imports.wbg.__widl_f_key_KeyboardEvent = function(arg0, arg1) {
+        const ret = getObject(arg1).key;
+        const ret0 = passStringToWasm(ret);
+        const ret1 = WASM_VECTOR_LEN;
+        getInt32Memory()[arg0 / 4 + 0] = ret0;
+        getInt32Memory()[arg0 / 4 + 1] = ret1;
     };
     imports.wbg.__widl_f_request_animation_frame_Window = function(arg0, arg1) {
         try {
@@ -322,7 +355,25 @@ function init(module) {
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm(arg0, arg1));
     };
-    imports.wbg.__wbindgen_closure_wrapper29 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper40 = function(arg0, arg1, arg2) {
+        const state = { a: arg0, b: arg1, cnt: 1 };
+        const real = (arg0) => {
+            state.cnt++;
+            const a = state.a;
+            state.a = 0;
+            try {
+                return __wbg_elem_binding1(a, state.b, arg0);
+            } finally {
+                if (--state.cnt === 0) wasm.__wbg_function_table.get(4)(a, state.b);
+                else state.a = a;
+            }
+        }
+        ;
+        real.original = state;
+        const ret = real;
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbindgen_closure_wrapper42 = function(arg0, arg1, arg2) {
         const state = { a: arg0, b: arg1, cnt: 1 };
         const real = (arg0) => {
             state.cnt++;
