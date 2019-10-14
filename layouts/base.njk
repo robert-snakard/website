@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- hack until I fix the CSS. Then time to learn PostCSS -->
+    <link rel="stylesheet" href="../assets/stylesheets/main.css">
+    <title>{{ title }}</title>
+  </head>
+  <body>
+    {% include "partials/header.njk" %}
+    {{ contents | safe }}
+    {% include "partials/footer.njk" %}
+  </body>
+</html>

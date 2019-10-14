@@ -1,0 +1,26 @@
+{
+  "name": "website",
+  "version": "0.2.0",
+  "description": "Snakard's Homepage",
+  "main": "build.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robert-snakard/website.git"
+  },
+  "author": "Robert Snakard",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/robert-snakard/website/issues"
+  },
+  "homepage": "https://github.com/robert-snakard/website#readme",
+  "dependencies": {
+    "jstransformer-nunjucks": "^1.0.0",
+    "metalsmith": "^2.3.0",
+    "metalsmith-in-place": "^4.4.1",
+    "metalsmith-layouts": "^2.3.1",
+    "metalsmith-markdown": "^1.2.0"
+  }
+}
