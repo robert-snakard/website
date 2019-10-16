@@ -53,34 +53,59 @@ my defaults
 
 .ralign {
 	text-align: right;
+    margin-right: 20px;
 }
 
-/**********************
-Make things look pretty
-**********************/
+@font-face {
+    font-family: 'Dauphin';
+    src: url('./Dauphin.ttf');
+}
+
+/*******************
+ * Base
+ *****************/
+
+html {
+    height: 100%;
+}
 
 body {
-	background-color: black;
+  margin: 0;
+  padding: 0;
+  background-color: #e6f4ef;
+  background: linear-gradient(to right,  #e6f4ef, #678b41, #e6f4ef);
+  height: 100%;
+  overflow: hidden;
 }
 
-/******
-header
-******/
+#wrapper {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    height: calc(100% - 20px);
+    width: 1000px;
+    background-color: black;
+}
+
+/***********
+ * Header
+ **********/
 
 header {
-	height: 15vh;
-	background-color: green;
+    height: 150px;
+    background-color: #3a3a3a;
 }
 
 .nav {
 	font-size: 24px;
 
-	height: 15vh;
-	padding-top: 12.1vh;
+	height: 150px;
+	padding-top: 120px;
 }
 
 .nav a {
-	color: black;
+	color: white;
 	padding-left: 4px;
 	padding-right: 4px;
 }
@@ -94,24 +119,24 @@ header {
 
 	font-size: 72px;
 	padding: 28px;
-	color: black;
+	color: white;
+    font-family: 'Dauphin', serif;
 
 	border-style: solid;
 }
 
-/****
-blog
-****/
+/**********
+ * Index
+ *********/
 
-section {
-	background-color: red;
-	height: 70vh;
-	width: 60vw;
-
-	margin-left: 20vw;
+#index, #scs {
+    height: calc(100% - 250px);
+    margin-left: auto;
+    margin-right: auto;
+    background-color: white;
 }
 
-section p {
+#index p {
 	margin-bottom: 10px;
 }
 
@@ -124,67 +149,11 @@ footer
 ******/
 
 footer {
-	height: 15vh;
-	background-color: green;
+    height: 100px;
+    background-color: #3a3a3a;
+    color: white;
 }
 
 .contact-info {
 	float: middle;
-}
-
-/****************
-hero splash page
-****************/
-
-#splash {
-	position: absolute;
-	top: 0;
-	left: 0;
-
-/*	height: 100vh;
-	width: 100vw;*/
-}
-
-.zero {
-	background-image: url("../images/loneliest_road.webp");
-	background-size: cover;
-
-	height: 100vh;
-    width: 100vw;
-
-    margin: 0;
-}
-
-.hero {
-    display: none;
-}
-.button {
-	position: absolute;
-	top: 50vh;
-	left: 47.5vw;
-
-	height: 2em;
-	width: 150px;
-
-	border-width: 2px;
-	border-style: solid;
-	border-color: white;
-	border-radius: 10px;
-
-	color: white;
-	text-align: center;
-	padding-top: 0.75em;
-	font-size: 24px;
-}
-
-.button:hover {
-	border-color: hsl(270, 50%, 38%);
-	color: hsl(270, 50%, 38%);
-	background-color: hsl(300, 5%, 95%);
-}
-
-.negative:hover {
-	border-color: hsl(0, 50%, 38%);
-	color: hsl(0, 50%, 38%);
-	background-color: hsl(30, 5%, 95%);
 }
