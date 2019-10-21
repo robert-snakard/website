@@ -117,7 +117,7 @@ header {
 .logo {
 	float: left;
 
-	font-size: 72px;
+	font-size: 96px;
 	padding: 28px;
 	color: white;
     font-family: 'Dauphin', serif;
@@ -129,8 +129,8 @@ header {
  * Index
  *********/
 
-#index, #scs {
-    height: calc(100% - 250px);
+#index, #scs, article{
+    min-height: calc(100% - 250px);
     margin-left: auto;
     margin-right: auto;
     background-color: white;

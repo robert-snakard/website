@@ -1,0 +1,85 @@
+@import 'main.css';
+
+/**************
+page specific
+ **************/
+body {
+    overflow: visible;
+}
+
+article {
+    background-color: #f6eaea;
+    padding: 95px;
+}
+
+article p {
+    padding: 5px;
+    line-height: 1.3;
+}
+
+article img {
+    margin-top: 30px;
+    height: auto;
+    max-width: 100%;
+}
+
+#notepadpp {
+    border: 1px solid black;
+    box-sizing: border-box;
+    border-right: 0px;
+    border-bottom: 0px;
+}
+
+article h1 {
+    font-weight: 500; 
+    font-size: 265%;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+article h2 {
+    font-weight: 400; 
+    font-size: 200%;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+h2.subheader {
+    font-style: oblique;
+    font-size: 150%;
+}
+
+article h3 {
+    font-size: 150%;
+    font-weight: 900;
+    padding: 5px;
+    margin-top: 20px;
+}
+
+article .intro {
+    font-style: italic;
+    font-size: 120%;
+    line-height: 1.2;
+}
+
+article .note {
+    font-style: oblique;
+}
+
+article code {
+    font-family: monospace;
+    background-color: #ede1d1;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 3px;
+}
+
+article #dropcap {
+    font-size: 300%;
+    font-family: 'Dauphin', inherit;
+    line-height: 0.7;
+}
+
+article em {
+    font-variant: small-caps;
+}

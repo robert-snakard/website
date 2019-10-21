@@ -2,7 +2,8 @@
 
 const Metalsmith = require('metalsmith'),
       layouts    = require('metalsmith-layouts'),
-      inplace    = require('metalsmith-in-place');
+      inplace    = require('metalsmith-in-place'),
+      markdown   = require('metalsmith-markdown');
 
 const toUpper = function (string) {
     "use strict";
@@ -23,6 +24,7 @@ Metalsmith(__dirname)
     .destination('./build')
     .use(layouts(templateConfig))
     .use(inplace(templateConfig))
+    .use(markdown())
     .build(function (err) { 
         if(err) 
             console.log(err) 
