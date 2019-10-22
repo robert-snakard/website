@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.ico">
+    <title>Tetris</title>
+  </head>
+  <body>
+    <h1>Tetris</h1>
+    <canvas width='100' height='200' style="background-color: black"></canvas>
+    <p><a href="robertsnakard.com">Link to my blog!</a></p>
+    <script>
+      const canvas = document.getElementsByTagName("canvas");
+      const ctx = canvas[0].getContext("2d");
+
+      ctx.fillStyle = "red";
+      ctx.fillRect(30, 20, 40, 30);
+      ctx.fillStyle = "white";
+      ctx.fillText("I'm sorry Dave", 15, 90);
+    </script>
+  </body>
+</html>
