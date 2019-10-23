@@ -3,9 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- hack until I fix the CSS. Then time to learn PostCSS -->
     <link rel="stylesheet" href="./css/{{css}}">
     <title>{{ title }}</title>
+
+    <!-- Open Graph tags for social media -->
+    <meta property="og:site_name" content="RobertSnakard.com">
+    <meta property="og:title" content="{{og_title}}">
+    <meta property="og:description" content="{{og_desc}}">
+    <meta property="og:image" content="{{og_img}}">
+    <meta property="og:type" content="blog">
   </head>
   <body>
     <div id='wrapper'><!--
