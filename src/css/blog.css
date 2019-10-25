@@ -8,8 +8,15 @@ body {
 }
 
 article {
-    background-color: #f6eaea;
     padding: 95px;
+}
+
+article#post_1 {
+    background-color: #f6eaea;
+}
+
+article#post_2 {
+    background-color: #f6f0ea;
 }
 
 article p {

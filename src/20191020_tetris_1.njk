@@ -7,7 +7,7 @@ og_title: "Tetris and Wasm Part 1: HTML, Javascript, and the Canvas Rendering Co
 og_desc: "Blog post describing how to make an HTML file, how to embed javascript, and how to access world-class graphics libraries using the canvas rendering context"
 og_img: "img/og.png"
 ---
-<article>
+<article id="post_1">
   <h1>Making Tetris in Rust and Wasm (Part 1)</h1> 
   <h2>The Tetris Video Framework (Part 1)</h2>
   <h2 class="subheader">HTML, Javascript, and the CanvasRenderingContext</h2>
@@ -51,12 +51,12 @@ og_img: "img/og.png"
     .to/dandyvica/wasm-in-rust-without-nodejs-2e0c</a></p>
   <br>
   <p>And now the file:<br>
-  <img src="imgs/initial_file.png" 
+  <img src="imgs/tetris_1/initial_file.png" 
        alt="Computer desktop showing blank html document named 'index.html'" 
        title="Initial File">
   <br>Create a file <code>index.html</code> and open it up in your favorite text editor<br>
   <img id="notepadpp"
-       src="imgs/empty_index.png" 
+       src="imgs/tetris_1/empty_index.png" 
        alt="Notepad++ showing the skeleton index.html with an h1 tag: 'Tetris'. Go to my 
             github and find src/source/empty_index for the source" 
        title="Empty Index">
@@ -75,7 +75,7 @@ og_img: "img/og.png"
   for a separate mobile site. I got these from <a href="https://htmlhead.dev">
     htmlhead.dev</a>.</p>
   <p>Now open <code>index.html</code> in your favorite web browser.
-  <img src="imgs/skeleton_firefox.png" 
+  <img src="imgs/tetris_1/skeleton_firefox.png" 
        alt="Screenshot of index.html open in firefox. 'Tetris' is displayed on the page"
        title="Skeleton Firefox">
   <br>If yours doesn't look like mine you did something wrong. Look at your 
@@ -84,7 +84,7 @@ og_img: "img/og.png"
   <h3>2 - A very good place to start</h3>
   <p>Now we're gonna take a look at some javascript, some graphics, and compile 
   our first wasm.<br>
-  <img src="imgs/start_2.png" 
+  <img src="imgs/tetris_1/start_2.png" 
        alt="index.html with a canvas element. Go to my github and find src/source/start_2 for the source" 
        title="Start 2">
   <br>First make your webpage look like mine. We've added a title and an icon, 
@@ -102,7 +102,7 @@ og_img: "img/og.png"
   <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API" 
      title="The canvas MDN page">canvas MDN page</a> for more canvas guides, 
    tutorials and libraries and look at the javascript below.<br>
-   <img src="imgs/javascript_1.png"
+   <img src="imgs/tetris_1/javascript_1.png"
         alt="index.html after adding some javascript to draw a rectangle on our canvas element. Go to my github and find src/source/javascript_1 for the source"
         title="Javascript 1">
    <br>First thing we did was add some script tags so we can write some javascript. 
@@ -129,11 +129,11 @@ og_img: "img/og.png"
   <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/bezierCurveTo"
      title="the 2d rendering context's `bezierCurveTo()` method.">BezierCurveTo</a>.</p>
   <p>We drew a rectangle.<br>
-  <img src="imgs/javascript_2.png"
+  <img src="imgs/tetris_1/javascript_2.png"
        alt="index.html after adding more javascript that adds text to our canvas element. Go to my github and find src/source/javascript_2 for the source."
        title="Javascript 2"> 
   <br>And added some text.<br>
-  <img src="imgs/hal9000.png" 
+  <img src="imgs/tetris_1/hal9000.png" 
        alt="A HAL9000 replica drawn entirely in javascript. See src/source/HAL9000 for the source" 
        title="HAL9000">
   <br>Draw the rest of the fucking owl.</p>
@@ -141,7 +141,7 @@ og_img: "img/og.png"
   <p>So yea, I did an art project instead of finishing up this article. It
   <em>was</em> getting really long though and I <em>was</em> going to have to split it into
   3 movies anyway, so goodbye, Here's a picture of a cat.</p>
-  <p><img src="imgs/kitty.jpg" 
+  <p><img src="imgs/tetris_1/kitty.jpg" 
           alt="A sleepy kitty snoozing in a sleepy kitty hammock" 
           title="Kitty"></p>
 </article>

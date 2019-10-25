@@ -1,0 +1,205 @@
+---
+title: Tetris 2
+layout: base.njk
+css: blog.css
+---
+<article id="post_2">
+  <h1>Making Tetris in Rust and Wasm (Part 1)</h1>
+  <h2>The Tetris Video Framework (Part 2)</h2>
+  <h2 class="subheader">Importing and Exporting in Web Assembly</h2>
+  <br>
+  <p class="intro">Welcome back readers. So you've survived the first article. 
+  Many have. Many... have not. This article assumes a bit of background knowledge. 
+  And a bit of intelligence on behalf of the reader. I will not explain what a 
+  function is, I will not explain what a variable is. I will not explain what it 
+  means to pass two variables as parameters when calling a function. If you do not 
+  understand the jargon you must learn like everyone else: using context clues and \
+  honing your Google-fu. Welcome to Part 2.</p>
+  <h3>1 - A bit of history</h3>
+  <p>So first, what is Web Assembly? Well actually first, what is Assembly? </p>
+  <p>Assembly is the box of building blocks for code. There are lots of assembly instructions, 
+  each instruction does something different, each instruction is totally useless, and with 
+  enough of them you can build a castle. They're like the pennies of the US monetary system. 
+  And inflation is when you use a scripting language.</p>
+  <p>So what is web assembly? Web assembly is when a shopkeeper takes a hundred dollar bill and 
+  says that in his store it's only worth one cent. That was asmjs. Then someone else comes 
+  along, says "Hey, this is a great idea", and starts minting one cent coins that are technically 
+  worth $100 but then aren't because the economy fluctuates. That's web assembly. </p>
+  <p>So to sum up: </p>
+  <ul>
+    <li>Programming languages all compile to assembly eventually</li>
+    <li>Javascript is a giant, ugly, bloated scripting language</li>
+    <li><a href="http://asmjs.org/spec/latest/" title="asmjs whitepaper">Some geniuses</a> 
+    decide the best way to fix this is to create javascript versions of every assembly 
+    instruction</li>
+    <li><a href="https://github.com/appcypher/awesome-wasm-langs" 
+           title="Languages that compile to webasm">Lots of languages</a> make modifications 
+    so they can compile to asmjs</li>
+    <li><a href="https://lists.w3.org/Archives/Public/public-webassembly/2017Feb/0002.html"
+           title="web assembly whitepaper">Web browsers decide</a> "hey, why use javascript 
+    as a middle man?"</li>
+    <li>I get yelled at because my analogy is wrong in every way</li>
+  </ul>
+  <h3>2 - Your build environment</h3>
+  <p>Ah yes, everybody's favorite part. Configuring your build environment. If you've done this 
+  before this part's fun! There are so many shells to choose from, editors to choose from, 
+  editor themes to choose from. If you're new it's a lot of useless information. They all claim 
+  to be different, they all claim to be the best, they're all liars. Except Vim. Vim really is 
+  the best. Vimming is like swimming or riding a bike. It's painful to learn but it's a skill 
+  everyone should have. I recommend <a href="https://news.ycombinator.com/item?id=15400037"
+                                       title="Savensor's Vim Hacker News comment">this Hacker 
+  News comment by Sevensor</a>.</p>
+  <p class="note">The following section is a lot of information in a small space. Read everything
+  twice before doing it yourself and please email me if something is confusing.   - Robert</p>
+  <p>Alright, so I've decided on <a href="https://www.vim.org/download.php">my text editor</a>,
+  there's also <a href="https://atom.io/" title="atom text editor">Atom</a>, 
+  <a href="https://www.sublimetext.com/" title="SublimeText text editor">SublimeText</a>,
+  <a href="https://notepad-plus-plus.org/" title="Notepad++ text editor">Notepad++</a>, 
+  and a <a href="https://en.wikipedia.org/wiki/Comparison_of_text_editors#Overview"
+           title="Wikipedia list of text editors">host of others</a>, Now on to your shell. 
+  I'm using the <a href="https://i.kinja-img.com/gawker-media/image/upload/c_scale,f_auto,fl_progressive,q_80,w_1600/rctst3sunhqhdit9eot2.png"
+                   title="image showing ubuntu in windows store">Ubuntu install</a>for 
+  <a href="https://lifehacker.com/how-to-get-started-with-the-windows-subsystem-for-linux-18289526987"
+     title="WSL Lifehacker Article">Windows Subsystem for Linux</a>. There's also git bash, 
+  and if you're on OSX or Linux you can just use your terminal app. Choose one.</p>
+  <p>Now let's <a href="https://www.rust-lang.org/tools/install">install Rust</a>. Open 
+  your shell and paste <code>curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh</code>.
+  Read everything that prints to the screen, it will tell you how to uninstall 
+  if you want to start over. Now close and open your shell again to quickly 
+  source your <code>~/.profile</code>.</p>
+  <p>Now let's <a href="https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup"
+                  title="How to set up git">create</a>a 
+  <a href="https://github.com/" title="Github.com">Github</a> (if you haven't already) and 
+  <a href="https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent"\
+     title="github article, set up ssh keys">set up your ssh keys</a>. Create a repo 
+  <a href="https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-new-repository"
+     title="Github article, create a new repository">[no readme]</a> named 
+  <a href="https://guides.github.com/features/pages/" title="Github article, github pages">
+  <code>${USERNAME}.github.io</code></a>. This sets up Github Pages so you can 
+  view your website online. You can also use <a href="https://www.netlify.com/" title="netlify">
+  Netlify</a> or <a href="https://www.heroku.com/" title="heroku">Heroku</a>.</p>
+  <p>Now familiarize yourself with some <a href="https://dev.to/awwsmm/101-bash-commands-and-tips-for-beginners-to-experts-30je"
+                                           title="Beginner Bash Commands">
+  beginner bash commands</a>. Then <a href="https://github.com/michaeltreat/Windows-Subsystem-For-Linux-Setup-Guide/blob/master/readmes/03_understanding_the_file_systems.md"
+                                      title="WSL Filesystem">navigate to your home directory</a> 
+  and <code>mkdir</code> a project folder. We've got some initialization to do.</p>
+  <p><img src="imgs/tetris_2/initialization_step.png" 
+          alt="Bash prompt showing multiple bash commands and their successful completion. Source
+               is on my github at src/source/tetris_2/initialization_step.sh"
+          title="initialization step">
+  <br>
+  <span class="note">Note: I linked my project folder to the Desktop behind the scenes. You 
+  can do the same with <code>ln -s /mnt/c ~/Desktop</code></span>
+  <br>
+  Ok, so this is our initialization step. After creating our project folder we create a 
+  new Rust project using Cargo. Why is it called Cargo and not Rust? Copyright reasons. 
+  Next we install the web assembly (wasm) compilation target using Rustup. Why Rustup and 
+  not Cargo? Territorial dispute. </p>
+  <p>Now we'll create our first git commit. First initialize the project folder as a git 
+  repository.  Why does it say "Reinitialized" instead of "Initialized"? Cause Cargo 
+  interacts with git under the hood. Then add the <code>.gitignore</code>, add the files 
+  not ignored, and commit with a message. </p>
+  <p>This is a local commit. It's not pushed to Github yet.<br>See, Git's designed to 
+  work in a nuclear apocalypse, so until we use <code>git remote</code> your repository 
+  is completely independent from all networks. So grab the 
+  <a href="https://help.github.com/assets/images/help/repository/remotes-url.png"
+     title="image of the clone by ssh button">SSH link</a> for your remote repository 
+  and <code>git remote add origin</code> so we can push our commit. Now open
+  <code>Cargo.toml</code>.</p>
+  <p><img src="imgs/tetris_2/edit_cargo.png" 
+          alt="Cargo.toml edited to compile as a cdylib. See src/source/tetris_2/edited_cargo.toml"
+          title="edit Cargo"></p>
+  We didn't change too much. Just added the <code>[lib]</code> and <code>["cdylib"]</code> 
+  lines. See, when we compile we want our package to be a "C dynamic library", a 
+  <code>cdylib</code>. We want that because we need our library to be compatible with 
+  WASM and as a rule of thumb, C is compatible with everything.<br>
+  <img src="imgs/tetris_2/commit_cargo.png" 
+       alt="Bash prompt adding, committing, and pushing Cargo.toml. See src/source/tetris_2/commit_cargo.sh"
+       title="commit cargo changes">
+  <br>
+  This is your basic git workflow. <code>git add</code> all the files you changed, 
+  <code>git commit -m</code> your changes, then <code>git push</code> your new commits. 
+  There's also <code>git reset</code> to un-add a file, <code>git diff</code> to view 
+  your un-added changes, and <code>git log</code> to view your history. Here we commit 
+  our change to Cargo.toml.</p>
+  <p>Now create a file <code>index.html</code>, save, and commit it to test if your 
+  github.io works. You can see my <a href="https://robertsnakard.com/20191020_tetris_1.html"
+                                     title="link to tetris_1 blog post">last post</a> for 
+  an example skeleton.<br>
+  <img src="imgs/tetris_2/show_github_io.png" 
+       alt="firefox opened to robert-snakard.github.io"
+       title="show github io"></p>
+  <h3>3 - Rust and Wasm</h3>
+  <p>Alright you made it! It's time to get started with web assembly! Open up 
+  <code>src/lib.rs</code> and <code>index.html</code> It's time for some double 
+  text editing action!<br>
+  <img src="imgs/tetris_2/edit_lib.png" 
+       alt="Vim opened in a split window. On the left is `src/lib.rs`, on the right is `index.html`. See src/source/tetris_2/edit_lib.rs and edit_index.html"
+       title="edit lib.rs">
+  <br>
+  Here's our first bit of Rust. We create a test module and a function that asserts 2 + 2 
+  does equal 4. Now lets run the test.<br>
+  <img src="imgs/tetris_2/cfg_test.png" 
+       alt="Bash prompt showing the output of cargo test. See src/source/tetris_2/test.sh"
+       title="cfg test">
+  <br>
+  Now I got a warning cause <code>Desktop</code> is uppercase. I'll fix that later. 
+  Let's focus on the two new objects. Cargo.lock is generated from Cargo.toml, you 
+  can ignore it. <code>target</code> on the other hand, has all of our compiled 
+  binaries and will become very important as we compile our Wasm.<br>
+  <img src="imgs/tetris_2/edit_lib_2.png" 
+       alt="Vim opened in a split window again. On the left we've added a function `two_plus` to `src/lib.rs`, on the right is `index.html`. See src/source/tetris_2/edit_lib_2.rs and edit_index_2.html"
+       title="edit lib.rs 2">
+  <br>
+  Now we've added a function called <code>two_plus</code> that takes in an integer and 
+  returns an integer. Specifically it returns the original number plus 2. I also deleted 
+  the line that segregated modules. I'll explain them at another time.<br>
+  <img src="imgs/tetris_2/cfg_test_2.png" 
+       alt="Bash prompt showing the output of the second test. See src/source/tetris_2/test_2.sh"
+       title="cfg test 2">
+  <br>
+  Congratulations! Once yours passes the test you've successfully written your first Rust 
+  code! Are you ready for some wasm?<br>
+  <img src="imgs/tetris_2/edit_lib_3.png" 
+       alt="Vim opened in a split window again. On the left we've `pub`ed our `two_plus` function, on the right we're importing wasm into `index.html` and sending an alert. See src/source/tetris_2/edit_lib_3.rs and edit_index_3.html"
+       title="edit lib.rs 3">
+  <br>
+  Ok so first things first in the <code>src/lib.rs</code>, we added <code>#[no_mangle]</code> 
+  and made two_plus a public function. These are both very important for the compiler. 
+  <code>pub</code> means public.  It exports the function. Without it, <code>two_plus</code> 
+  wouldn't appear in <code>obj.instance.exports</code>. <code>no_mangle</code> is a command. 
+  It stops the compiler from mangling.</p>
+  <p>Now what is mangling? Time for another history lesson. People have been writing code for 
+  a while now. There's a lot of code out there. And as much as we like to think we're all random 
+  and original, we're not. There are probably hundreds of programs out there with a function 
+  named two_plus (although actually there aren't, I checked). So if I import two programs 
+  that export a two_plus function what happens? Things break. So instead one program exports a
+  <code>_RN15mycrate_4a3b56d3two_plusFE</code> and the other exports 
+  a <code>_JX17othercrate_e36ce00ctwo_plusAB</code>. There's an 
+  <a href="https://github.com/rust-lang/rust/pull/57967" title="mangling scheme pull request">entire</a> <a
+  href="https://github.com/rust-lang/rfcs/blob/master/text/2603-symbol-name-mangling-v2.md"
+  title="manglilng scheme rfc">scheme.</a></p>
+  <p>Ok. So. This is kinda out of order but let's look at the <code>index.html</code> side. 
+  We added some script tags. The first line imports our wasm (<code>./</code> for current 
+  directory, <code>desktop.wasm</code> cause that's my project name). After that we call our 
+  WASM function! obj because it's a wasm object, instance cause the other choice is module 
+  but we put all our functions in instance, exports cause that holds our exports, then 
+  two_plus, our function! We'll then call <code>alert</code> so we get a message saying it 
+  worked. Now to compile.</p>
+  <p><img src="imgs/tetris_2/cfg_test_3.png" 
+          alt="Bash prompt showing the output of the second test. See src/source/tetris_2/test_3.sh"
+          title="cfg test 3">
+  <br>
+  <p>Remember how I said <code>target</code> was going to be important later? Well it's 
+  important now. First we're going to <code>cargo build</code> to compile, and specify 
+  that wasm32 target we installed earlier with rustup. Then we need to go find it. The 
+  binary. Open your <code>target</code> directory and look for the folder <code>wasm32</code>. 
+  Cargo compiles in debug mode by default so you'll find your binary there but you can set the 
+  <code>--release</code> flag if you want.</p>
+  <p>Anyway copy your binary to <code>./${NAME}.wasm</code> then commit and push to github.io.<br>
+  <img src="imgs/tetris_2/wasm_pages.png" 
+       alt="screenshot of firefox displaying the correct alert message"
+       title="alert github io">
+  <br>
+  Tada!</p>
+</article>

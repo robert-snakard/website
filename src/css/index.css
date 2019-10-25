@@ -4,12 +4,27 @@
  Page Specific
  *************/
 
+.blog_posts {
+    margin: 50px;
+}
+
 .blog_post {
     padding: 20px;
-    margin: 50px;
+    margin-bottom: 30px;
     border: 2px solid black;
     border-radius: 17px;
+}
+
+#post_1 {
     background-color: #c98282;
+}
+
+#post_2 {
+    background-color: #f6bd83;
+    background-color: #e19951;
+    background-color: #c9a682;
+    background-color: #dba670;
+    background-color: #d2a679;
 }
 
 .blog_post a {
