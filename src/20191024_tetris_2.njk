@@ -202,4 +202,62 @@ css: blog.css
        title="alert github io">
   <br>
   Tada!</p>
+  <h3>4 - Javascript and Wasm</h3>
+  <p>Ok. So we can call Rust from Javascript. That's all fine and dandy. But what 
+  if we want to call Javascript functions from Rust? We've got this 
+  CanvasRenderingContext2d we've got to use and we don't want to be zigzagging from 
+  Javascript to Rust. That's just ugly. So we import them. Import from Javascript 
+  into Wasm, export from Wasm into Javascript. It's easy.<br>
+  <img src="imgs/tetris_2/import_lib.png"
+       alt="Vim opened in a split window again. On the left we've externed a function named alert, on the right we create an import object and pass it to WebAssembly. See src/source/tetris_2/import_lib.rs and import_index.html"
+       title=""import lib">
+  <br>
+  WebAssembly takes in an `importObject` and Rust `externs` the function. When 
+  they work together you can pass Javascript functions into Rust. Some questions:</p>
+  <p>What is an `importObject`? Well first, importObject is just a name but a Javascript 
+  `Object` is a variable that you create with curly braces. They're also sometimes called
+  `Dictionaries` because every entry has a `key`, and a `value`.</p>
+  <p>What is `extern`? Extern is an adjective. It means the function lives somewhere 
+  else and the compiler (technically the <a href="https://medium.com/@holdengrissett/the-4-steps-of-c-compilation-72e8ec474bd5#Step%204%20--%20Linker"
+                                            title="4 steps of a compiler">linker</a>)
+  will figure it out. When we compile with `--target wasm32` the compiler sets it 
+  up so all our `extern`s come from WebAssembly `importObject`s.</p>
+  <p>Wait, but last time we passed alert a `string`, why didn't we do that this time? 
+  Well first, the alert message 
+  <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/alert"
+     title="MDN documentation on Javascript's `alert`">is optional</a>, there's 
+  no black magic trickery going on.  But second, strings are hard. It can take 
+  a university course to <a href="https://en.wikipedia.org/wiki/Memory_leak" 
+                            title="Wikipedia article on memory leaks">fully grok 
+  the problem</a> but basically, strings cause 
+  <a href="https://www.youtube.com/watch?v=eu_kTGv61WQ" 
+     title="3 minute youtube video on memory leaks">memory leaks</a> because they're 
+  variable size.<br>
+  <img src="imgs/tetris_2/import_string.png"
+       alt="Vim opened in a split window again. On the left we've externed a new alert that takes a pointer as a parameter. On the right we create a wrapper function around our alert that reads memory then frees it when we're done. See src/source/tetris_2/string_lib.rs and string_index.html"
+       title="import string">
+  <br>
+  This is what you have to do use strings. First thing you’ll notice is that we've 
+  added an `env:` to our import object. That’s some 
+  <a href="https://stackoverflow.com/questions/42668708/webassembly-linkerror-module-env"
+     title="stackoverflow question detailing the problem">boilerplate cause we’re using 
+  `window.module`</a>, you can ignore it, it’s not important. Second thing you’ll notice 
+  is our Rust code is using pointers! Yes pointers! That’s because we’re accessing memory 
+  directly. When dealing with objects that can change in size (or ones that are just really 
+  big), we needt to store them in RAM. We then use pointers to point to RAM.</p>
+  <p>So `src/lib.rs` creates a string, then we cast it to a pointer and pass it to `alert`. 
+  It’s important to note this cast doesn’t transform the string. The string is always stored 
+  in memory. It just makes the pointer explicit. The `unsafe` is there because Rust tries 
+  to protect us from memory leaks and unprotected pointers are always dangerous.</p>
+  <p>Now `index.html`. We create a `module` object so we can use parts of `obj` in our 
+  imports. We then import a custom function instead of importing `alert` directly. This 
+  custom function accesses memory. We go through each memory location byte by byte and 
+  turn the integer located there into a letter using 
+  <a href="http://www.asciitable.com/index/asciifull.gif" title="ascii table">ASCII</a>. 
+  Doing this we can then construct the message one letter at a time. Only after we finish 
+  the message (when we find the null character) do we free the memory and display the 
+  message.</p>
+  <img src="imgs/tetris_2/alert_string.png"
+       alt="Firefox with alert message displaying 'Hello World'"
+       title="alert string">
 </article>
