@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" 
+          content="width=device-width,
+                   initial-scale=1">
+  </head>
+  <body>
+    <h1>Wasm</h1>
+    <script>
+      window.module = {};
+
+      const imports = {
+          env: {
+              alert: function(msg_ptr) {
+                  let memory = new Uint8Array(module.memory.buffer);
+                  let message = "";
+                  let counter = 0;
+                  while (memory[msg_ptr + counter] !== 0) {
+                      let charCode = memory[msg_ptr + counter];
+                      let letter = String.fromCharCode(charCode);
+                      message = message + letter; 
+                      counter += 1;
+                  }
+
+                  module.dealloc_str(msg_ptr);
+                  alert(message);
+              }
+          }
+      };
+
+      WebAssembly.instantiateStreaming(fetch('./desktop.wasm'), imports)
+      .then(obj => {
+          module.memory = obj.instance.exports.memory;
+          module.dealloc_str = function() {};
+          obj.instance.exports.run();
+      });
+    </script>
+  </body>
+</html>

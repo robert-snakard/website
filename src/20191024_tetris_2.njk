@@ -134,7 +134,7 @@ css: blog.css
   <code>src/lib.rs</code> and <code>index.html</code> It's time for some double 
   text editing action!<br>
   <img src="imgs/tetris_2/edit_lib.png" 
-       alt="Vim opened in a split window. On the left is `src/lib.rs`, on the right is `index.html`. See src/source/tetris_2/edit_lib.rs and edit_index.html"
+       alt="Vim opened in a split window. On the left is <code>src/lib.rs<code>, on the right is <code>index.html<code>. See src/source/tetris_2/edit_lib.rs and edit_index.html"
        title="edit lib.rs">
   <br>
   Here's our first bit of Rust. We create a test module and a function that asserts 2 + 2 
@@ -148,7 +148,7 @@ css: blog.css
   can ignore it. <code>target</code> on the other hand, has all of our compiled 
   binaries and will become very important as we compile our Wasm.<br>
   <img src="imgs/tetris_2/edit_lib_2.png" 
-       alt="Vim opened in a split window again. On the left we've added a function `two_plus` to `src/lib.rs`, on the right is `index.html`. See src/source/tetris_2/edit_lib_2.rs and edit_index_2.html"
+       alt="Vim opened in a split window again. On the left we've added a function <code>two_plus<code> to <code>src/lib.rs<code>, on the right is <code>index.html<code>. See src/source/tetris_2/edit_lib_2.rs and edit_index_2.html"
        title="edit lib.rs 2">
   <br>
   Now we've added a function called <code>two_plus</code> that takes in an integer and 
@@ -161,7 +161,7 @@ css: blog.css
   Congratulations! Once yours passes the test you've successfully written your first Rust 
   code! Are you ready for some wasm?<br>
   <img src="imgs/tetris_2/edit_lib_3.png" 
-       alt="Vim opened in a split window again. On the left we've `pub`ed our `two_plus` function, on the right we're importing wasm into `index.html` and sending an alert. See src/source/tetris_2/edit_lib_3.rs and edit_index_3.html"
+       alt="Vim opened in a split window again. On the left we've <code>pub<code>ed our <code>two_plus<code> function, on the right we're importing wasm into <code>index.html<code> and sending an alert. See src/source/tetris_2/edit_lib_3.rs and edit_index_3.html"
        title="edit lib.rs 3">
   <br>
   Ok so first things first in the <code>src/lib.rs</code>, we added <code>#[no_mangle]</code> 
@@ -212,20 +212,20 @@ css: blog.css
        alt="Vim opened in a split window again. On the left we've externed a function named alert, on the right we create an import object and pass it to WebAssembly. See src/source/tetris_2/import_lib.rs and import_index.html"
        title=""import lib">
   <br>
-  WebAssembly takes in an `importObject` and Rust `externs` the function. When 
+  WebAssembly takes in an <code>importObject</code> and Rust <code>externs</code> the function. When 
   they work together you can pass Javascript functions into Rust. Some questions:</p>
-  <p>What is an `importObject`? Well first, importObject is just a name but a Javascript 
-  `Object` is a variable that you create with curly braces. They're also sometimes called
-  `Dictionaries` because every entry has a `key`, and a `value`.</p>
-  <p>What is `extern`? Extern is an adjective. It means the function lives somewhere 
+  <p>What is an <code>importObject</code>? Well first, importObject is just a name but a Javascript 
+  <code>Object</code> is a variable that you create with curly braces. They're also sometimes called
+  <code>Dictionaries</code> because every entry has a <code>key</code>, and a <code>value</code>.</p>
+  <p>What is <code>extern</code>? Extern is an adjective. It means the function lives somewhere 
   else and the compiler (technically the <a href="https://medium.com/@holdengrissett/the-4-steps-of-c-compilation-72e8ec474bd5#Step%204%20--%20Linker"
                                             title="4 steps of a compiler">linker</a>)
-  will figure it out. When we compile with `--target wasm32` the compiler sets it 
-  up so all our `extern`s come from WebAssembly `importObject`s.</p>
-  <p>Wait, but last time we passed alert a `string`, why didn't we do that this time? 
+  will figure it out. When we compile with <code>--target wasm32</code> the compiler sets it 
+  up so all our <code>extern</code>s come from WebAssembly <code>importObject</code>s.</p>
+  <p>Wait, but last time we passed alert a <code>string</code>, why didn't we do that this time? 
   Well first, the alert message 
   <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/alert"
-     title="MDN documentation on Javascript's `alert`">is optional</a>, there's 
+     title="MDN documentation on Javascript's <code>alert</code>">is optional</a>, there's 
   no black magic trickery going on.  But second, strings are hard. It can take 
   a university course to <a href="https://en.wikipedia.org/wiki/Memory_leak" 
                             title="Wikipedia article on memory leaks">fully grok 
@@ -238,19 +238,19 @@ css: blog.css
        title="import string">
   <br>
   This is what you have to do use strings. First thing you’ll notice is that we've 
-  added an `env:` to our import object. That’s some 
+  added an <code>env:</code> to our import object. That’s some 
   <a href="https://stackoverflow.com/questions/42668708/webassembly-linkerror-module-env"
      title="stackoverflow question detailing the problem">boilerplate cause we’re using 
-  `window.module`</a>, you can ignore it, it’s not important. Second thing you’ll notice 
+  <code>window.module</code></a>, you can ignore it, it’s not important. Second thing you’ll notice 
   is our Rust code is using pointers! Yes pointers! That’s because we’re accessing memory 
   directly. When dealing with objects that can change in size (or ones that are just really 
   big), we needt to store them in RAM. We then use pointers to point to RAM.</p>
-  <p>So `src/lib.rs` creates a string, then we cast it to a pointer and pass it to `alert`. 
+  <p>So <code>src/lib.rs</code> creates a string, then we cast it to a pointer and pass it to <code>alert</code>. 
   It’s important to note this cast doesn’t transform the string. The string is always stored 
-  in memory. It just makes the pointer explicit. The `unsafe` is there because Rust tries 
+  in memory. It just makes the pointer explicit. The <code>unsafe</code> is there because Rust tries 
   to protect us from memory leaks and unprotected pointers are always dangerous.</p>
-  <p>Now `index.html`. We create a `module` object so we can use parts of `obj` in our 
-  imports. We then import a custom function instead of importing `alert` directly. This 
+  <p>Now <code>index.html</code>. We create a <code>module</code> object so we can use parts of <code>obj</code> in our 
+  imports. We then import a custom function instead of importing <code>alert</code> directly. This 
   custom function accesses memory. We go through each memory location byte by byte and 
   turn the integer located there into a letter using 
   <a href="http://www.asciitable.com/index/asciifull.gif" title="ascii table">ASCII</a>. 
