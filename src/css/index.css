@@ -20,11 +20,11 @@
 }
 
 #post_2 {
-    background-color: #f6bd83;
-    background-color: #e19951;
-    background-color: #c9a682;
-    background-color: #dba670;
     background-color: #d2a679;
+}
+
+#post_3 {
+    background-color: #eeeea5;
 }
 
 .blog_post a {

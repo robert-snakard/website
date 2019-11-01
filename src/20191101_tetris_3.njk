@@ -1,0 +1,77 @@
+---
+title: Tetris 3
+layout: base.njk
+css: blog.css
+---
+
+<article id="post_3">
+<h1>Making Tetris in Rust and Wasm</h1>
+<h2>Part 1: The Tetris Video Framework</h2>
+<h2 class='subheading'>Part 3: Architecting the Tetris Video Framework</h2>
+<p>Hello and welcome one and all to Robert Snakard’s World Famous Tetris Video Framework! Step right up and enjoy this Rust library of epic proportions! Only here will you see Results tried and returned, Arcs and RefCells used without measure, and who could forget the illustrious Piece museum! </p>
+<p>In our main file you’ll find the request_animation_frame loop. Trust me, this little bit of recursion is one you won’t want to miss. You’ll be coming back again and again and again and again. To the left you’ll find our App module which performs unwrap after unwrap to create a beautiful CanvasRenderingContext and to the right is the Game module. While its small we promise it will grow bigger in size as we add more rules to the game.</p>
+<p>So please folks. Sit back, relax, and enjoy this edu-tainment today!</p>
+<h3>1 - Creating a new project</h3>
+<p>We’re finally starting our project now. We’ve done the background research. We know how to write HTML, we know how to write Rust, now let’s make something useful. </p>
+<p><img src="imgs/tetris_3/new_project.png" alt=""></p>
+<p>You’ve done this before. Create a new Cargo project, initialize your git repository (if things aren’t working double check your <a href="https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account">ssh keys</a>!), and push your first commit to master. Oh, and install <a href="https://github.com/rustwasm/wasm-pack">wasm-pack</a>.</p>
+<p><img src="imgs/tetris_3/install_wasm_pack.png" alt=""></p>
+<p>We’ll use this, combined with <code>wasm-bindgen</code>, to make importing and exporting from Javascript easier. Speaking of, lets open <code>Cargo.toml</code></p>
+<p><img src="imgs/tetris_3/cargo.png" alt=""></p>
+<p>We want to add two dependencies to our project. The <a href="https://crates.io/crates/wasm-bindgen"><code>wasm-bindgen</code></a> crate and the <a href="https://crates.io/crates/web-sys"><code>web-sys</code></a> crate. Wasm-bindgen is used to create javascript-to-webassembly bindings so we don’t need to do all that ugly string collecting I showed you in the last post. Web-sys gives us access to javascript functions like <code>canvas.getContext()</code>. Speaking of:</p>
+<p><img src="imgs/tetris_3/initial_lib.png" alt=""></p>
+<p>This is our <code>src/lib.rs</code>. The blue <a href="https://doc.rust-lang.org/book/ch02-00-guessing-game-tutorial.html#processing-a-guess">imports our dependencies</a>, the purple <a href="https://www.w3schools.com/js/js_htmldom_methods.asp">sets up our DOM</a>, and the green calls <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect">fillRect</a>. Notice the <code>#[wasm_bindgen(start)]</code>. This lets us compile with wasm-pack instead of cargo so we can import our package as an ES6 module.</p>
+<p><img src="imgs/tetris_3/wasmpack_first_compile.png" alt=""></p>
+<p>Wasm-pack compiles our package into the pkg directory where we have a host of files.</p>
+<p><img src="imgs/tetris_3/wasmpack_file_explorer.png" alt=""></p>
+<p>The only important ones are the <code>.js</code> one and <code>.wasm</code> one. You use them like so:</p>
+<p><img src="imgs/tetris_3/index.png" alt=""></p>
+<p> <code>tetris.js</code> is glue code. It includes code to access memory, pass strings, and import/export functions. <code>tetris_bg.wasm</code> is our binary. We import the glue code so it’s accessible for everyone, then init our binary. When we call <code>init</code>, <code>init</code> will call whatever function we labelled as <code>#[wasm_bindgen(start)]</code>. This is how we will enter our webapp. Now, let’s see if it runs.</p>
+<p> <img src="imgs/tetris_3/first_firefox.png" alt=""></p>
+<p> Yay!</p>
+<h3>2 - Laying A Foundation</h3>
+<p> When writing any piece of code it’s important to lay a good foundation. When writing Rust, triply so. Javascript is extremely flexible. If you make an architecture mistake it’s easy to hack in a quick fix. Rust, you can’t hack.</p>
+<p> So what does a game of Tetris require? We need some way to draw pieces, we need some way to create pieces, we need some way to move pieces, and we need some way to detect collisions. Today we’re focusing on the “draw pieces” side of things but we’ll draw a blueprint for everything.</p>
+<p><img src="imgs/tetris_3/game_blueprint.png" alt=""></p>
+<p> And then focus on <code>draw_piece()</code>.</p>
+<p><img src="imgs/tetris_3/zim_fold.png" alt=""></p>
+<p> You can do the folding with <a href="http://vimdoc.sourceforge.net/htmldoc/fold.html#zf">zim fold</a>, <code>zfi{</code>.</p>
+<h3> 3 - Beginning Construction </h3>
+<p> Now we ask ourselves a question. Where do we start? In this case, let’s start with what we already have. I’ve moved our <code>hello_world</code> code into <code>draw_piece()</code> and added comments. I like to organize my code into lots of small messes so refactoring is easier.</p>
+<p><img src="imgs/tetris_3/draw_piece_first_edition.png" alt=""></p>
+<p> Ok. But we still need to draw a piece, and drawing the piece is a very key part of Tetris.</p>
+<p> I’ll admit, I actually got a little bit of analysis paralysis at this part. If we want to draw a piece we have to know what a piece is. And depending on how you look at it a piece can be a lot of different things. Now I did <a href="https://github.com/DavideCanton/rust-tetris/blob/master/src/pieces.rs#L223">a</a> <a href="https://meatfighter.com/nintendotetrisai/#Representing_Tetriminos">lot</a> <a href="https://github.com/chvin/react-tetris/blob/master/src/unit/const.js">of</a> <a href="https://tetris.fandom.com/wiki/SRS">research</a> on this part trying to find the best way to represent a piece. I settled on an <a href="https://doc.rust-lang.org/book/ch03-02-data-types.html#the-array-type">array</a>. </p>
+<p> IMPORTANT: <a href="https://www.learn-c.org/en/Arrays">ARRAYS START AT 0</a>!!</p>
+<p><img src="imgs/tetris_3/draw_piece_second_edition.png" alt=""></p>
+<p> Which is great and all, but using an array means we have to traverse it. And traversing arrays is an entire <a href="https://en.wikipedia.org/wiki/Functional_programming">category of programming</a> all by itself. We’ll just use a <a href="https://doc.rust-lang.org/book/ch03-05-control-flow.html#looping-through-a-collection-with-for">for loop</a>. It may be slower, but it’s straightforward and easy enough to understand.</p>
+<p> <img src="imgs/tetris_3/draw_piece_third_edition.png" alt=""></p>
+<p> We’ve got our for loop, which starts at 0 (the first item in the list), and ends <a href="https://doc.rust-lang.org/rust-by-example/flow_control/for.html">one before</a> the length, which leaves us with a bit of math. Since you’ve played around with fillRect you’ll know we have to set the location of the square and then the size. The size can be pretty much anything, set it first though cause we also use it in our location. To set the location, take a look at the way we organized our <code>piece</code> array.</p>
+<pre><code> 0, 1, 0, 0,
+ 1, 1, 1, 0,
+ 0, 0, 0, 0,
+ 0, 0, 0, 0,</code></pre><p> 16 spots: 4 rows, 4 in a row. Now <code>4x4=16</code> so we know to go backwards we’ll <a href="https://en.wikipedia.org/wiki/Inverse_function#Inverses_in_calculus">need to divide</a>. Let’s checkout spot number 6. We start at 0, count left to right, and hit this one. Row 1, Index 2.</p>
+<pre><code> 0, 1, 0, 0,
+ 1, 1, 1, 0
+ 0, 0, 0, 0,
+ 0, 0, 0, 0,</code></pre><p> What’s 6 divided by 4? 1 remainder 2.</p>
+<p> You can try the math for any index in the array, 3/4 = 0R3, 13/4 = 3R1. As long as you start counting at 0 the math will always work out to be your graphical coordinates. The xcoord uses <code>%</code>, the <a href="https://blog.mattclemente.com/2019/07/12/modulus-operator-modulo-operation.html">remainder operator</a>, and the ycoord uses <code>/</code>, the <a href="https://press.rebus.community/programmingfundamentals/chapter/integer-division-and-modulus/">divide-and-truncate operator</a>. It’s one of those beautiful coincidences in mathematics.</p>
+<p><img src="imgs/tetris_3/t_block_firefox.png" alt=""></p>
+<h3> 4 - Finally pitch the tent </h3>
+<p> Now the whole point of architecting and modularizing and organizing your code is to make it portable. We want to organize the code into bite-sized chunks so we can create a sane API and call them where they’re needed. We currently have a <code>draw_piece()</code> function. When I call it I’d like to specify which piece I’m drawing, how it’s rotated, and where on the tetris board it’s located, so let’s do that.</p>
+<p><img src="imgs/tetris_3/draw_piece_enums.png" alt=""></p>
+<p> And then in another file named <code>src/pieces.rs</code></p>
+<p><img src="imgs/tetris_3/pieces_rs.png" alt=""></p>
+<p> I won’t make you define that whole thing, you can find the source on my github. What we’ve done though is define every piece and each of their rotations in a file named <code>src/pieces.rs</code>. Now we can import them just like we did with our dependencies.</p>
+<p><img src="imgs/tetris_3/import_pieces.png" alt=""></p>
+<p> And then use our function parameters.</p>
+<p><img src="imgs/tetris_3/call_draw_piece.png" alt=""></p>
+<p> And while we’re at it, let’s split our code into <code>game</code> and <code>app</code> modules</p>
+<p><img src="imgs/tetris_3/app_and_game_modules.png" alt=""></p>
+<p> And reorganize the whole thing altogether!</p>
+<p><img src="imgs/tetris_3/rearchitecture.png" alt=""></p>
+<p> So what did we do?</p>
+<p> We reorganized. I decided to split the game into two parts. The <code>game</code> module, which consists of everything we do when playing the game, and the <code>app</code> module, which contains all our javascript/web-sys code. Lastly I added our <code>enums</code> to the pieces file, they just seemed to fit there best.</p>
+<p> A lot of organizing is arbitrary, like I could have put <code>draw_piece</code> in <code>app</code>. I mean it does use the <code>CanvasRenderingContext</code>! The thing is, it also uses the <code>PIECE</code> array and I had to decide whether I wanted <code>web-sys</code> to bleed into <code>game</code> or <code>pieces</code> to bleed into <code>app</code>. I chose the former.</p>
+<p> You’re always going to have tradeoffs when programming and re-architecturing sucks so oftentimes it will be on you to decide if the duct-tape fix is safe enough. In one of these articles I’ll show you how to make a wrapper and we’ll wrap <code>ctx</code> with a nice pretty bow, but for now it’s exposed to the world. Because it’s easier that way.</p>
+<p><img src="imgs/tetris_3/last_firefox.png" alt=""></p>
+</article>

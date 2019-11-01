@@ -74,7 +74,7 @@ body {
   padding: 0;
   background-color: #e6f4ef;
   background: linear-gradient(to right,  #e6f4ef, #678b41, #e6f4ef);
-  height: 100%;
+  min-height: 100%;
 }
 
 #wrapper {
@@ -82,7 +82,7 @@ body {
     margin-bottom: 10px;
     margin-left: auto;
     margin-right: auto;
-    height: calc(100% - 20px);
+    min-height: calc(100% - 20px);
     width: 1000px;
     background-color: black;
 }
@@ -138,6 +138,7 @@ header {
     min-height: 80%;
     margin-left: auto;
     margin-right: auto;
+    padding-bottom: 30px;
     background-color: white;
 }
 
