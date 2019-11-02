@@ -19,7 +19,7 @@ css: blog.css
 <p>We’ll use this, combined with <code>wasm-bindgen</code>, to make importing and exporting from Javascript easier. Speaking of, lets open <code>Cargo.toml</code></p>
 <p><img src="imgs/tetris_3/cargo.png" alt=""></p>
 <p>We want to add two dependencies to our project. The <a href="https://crates.io/crates/wasm-bindgen"><code>wasm-bindgen</code></a> crate and the <a href="https://crates.io/crates/web-sys"><code>web-sys</code></a> crate. Wasm-bindgen is used to create javascript-to-webassembly bindings so we don’t need to do all that ugly string collecting I showed you in the last post. Web-sys gives us access to javascript functions like <code>canvas.getContext()</code>. Speaking of:</p>
-<p><img src="imgs/tetris_3/initial_lib.png" alt=""></p>
+<p><img src="imgs/tetris_3/hello_world.png" alt=""></p>
 <p>This is our <code>src/lib.rs</code>. The blue <a href="https://doc.rust-lang.org/book/ch02-00-guessing-game-tutorial.html#processing-a-guess">imports our dependencies</a>, the purple <a href="https://www.w3schools.com/js/js_htmldom_methods.asp">sets up our DOM</a>, and the green calls <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect">fillRect</a>. Notice the <code>#[wasm_bindgen(start)]</code>. This lets us compile with wasm-pack instead of cargo so we can import our package as an ES6 module.</p>
 <p><img src="imgs/tetris_3/wasmpack_first_compile.png" alt=""></p>
 <p>Wasm-pack compiles our package into the pkg directory where we have a host of files.</p>

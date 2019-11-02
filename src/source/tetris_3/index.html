@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tetris</title>
+  </head>
+  <body>
+    <h1>Tetris!</h1>
+    <canvas height=200 width=100 id="my_canvas"></canvas>
+    <p>robertsnakard.com</p>
+    
+    <script type="module">
+        import { default as init } from "./pkg/tetris.js";
+        async function run() {
+            await init("./pkg/tetris_bg.wasm");
+        } run();
+    </script>
+
+  </body>
+</html>
