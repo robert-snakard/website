@@ -4,6 +4,18 @@
  Page Specific
  *************/
 
+ .intro {
+    padding: 50px;
+    padding-bottom: 0;
+ }
+
+ .intro img {
+    float: left;
+    height: 5em;
+    width: auto;
+    padding-right: 7px;
+ }
+
 .blog_posts {
     margin: 50px;
 }
