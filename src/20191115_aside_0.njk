@@ -1,0 +1,75 @@
+---
+title: Aside 0
+layout: base.njk
+css: blog.css
+---
+
+<article class="aside">
+  <h1>How to set up AWS EC2 so you can access it from a public library computer</h1>
+  <p>Many people do not have their own laptop. Whether you've only got your phone and 
+  work laptop or you share a computer with your family, sometimes you're not allowed to 
+  install things on it. This makes developing difficult.</p>
+  <p>If you're interested in web applications there are many online development environments 
+  that set up your stack and give you a pre-configured environment. If that's your interest I
+  recommend <a href="https://codenvy.io">codenvy.io</a> from RedHat. Because I like the company, 
+  not because it's the best.</p>
+  <p>If you're more interested in mobile development or enterprise software you'll need a more
+  unrestricted dev environment, this is hard to find for free. One thing you can do is make a 
+  new AWS account. AWS (Amazon Web Services) is a business that hosts a collection of services, 
+  one of these services is something called an EC2 instance. You get an online development machine
+  that is free for a year. Once you initialize your EC2 instance online you can SSH into it and 
+  set up your dev environment just like we did in 
+    <a href="https://robertsnakard.com/20191024_tetris_2.html">tetris_2</a>.</p>
+  <p>Here's how to set up your EC2 instance so that you can access it from a public library 
+  computer.</p>
+  <h3>What You Need:</h3>
+  <ul>
+    <li>A computer you can download things to. You may use your phone.</li>
+    <li>An ssh client that lets you add private keys. This includes phone apps.</li>
+  </ul>
+  <h3>Step 1 - Create an AWS Account</h3>
+  <p><a href="https://portal.aws.amazon.com/billing/signup?nc2=h_ct&amp;src=default&amp;redirect_url=https%3A%2F%2Faws.amazon.com%2Fregistration-confirmation#/start">
+    Create an AWS account</a> and login. You will need to provide a credit card. This is 
+  how Amazon guarantees you're not a robot.</p><br>
+  <img src="./imgs/aside_0/aws_create_ec2.png" alt="AWS Create EC2">
+  <br>
+  <p>You'll be met with a webpage that looks like this. All the AWS services are used in 
+  business and are definitely worth learning. For now click on the link that says "Launch a virtual machine", we're going to create a virtual computer using EC2.</p>
+  <p><img src="./imgs/aside_0/ec2_linux_2.png" alt="EC2 Linux 2"></p>
+  <p>First select the Amazon Linux 2 AMI. </p>
+  <p>AMI means <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html">Amazon Machine Image</a>. Machine images are something that have <a href="https://en.wikipedia.org/wiki/Virtual_machine">been around a while</a>. In the virtual machine world <a href="https://help.ubuntu.com/community/VirtualBox">VirtualBox</a> has its VDI file type, <a href="https://wiki.archlinux.org/index.php/QEMU">QEMU</a> uses qcows, you can even make your own if you're on Linux. Plug in your flash drive and a quick <code>dd if=/dev/sda of=/dev/sdx</code> and you've now got your entire computer on your flash drive!</p>
+  <p>Note: The above command will break things. Do not use it until you know what it does. <a href="https://wiki.archlinux.org/index.php/USB_flash_installation_media#Using_dd">This</a> is a nice tutorial.</p>
+  <p><img src="./imgs/aside_0/review_and_launch.png" alt="Review and Launch"></p>
+  <p>The t2.micro should already be selected for you. If not, select it yourself then click "Review and Launch". This will skip the configuration steps and give you a default security group and 8GB of storage. Now click Launch.</p>
+  <p><img src="./imgs/aside_0/download_keypair.png" alt="Download Keypair"></p>
+  <p>You have to download a key pair, this will be saved as a <code>.pem</code> file, use it to ssh in to your EC2 instance.</p>
+  <h3 id="step-2---ssh-into-ec2">Step 2 - SSH into EC2</h3>
+  <p>Ok now we're going to <a href="https://searchsecurity.techtarget.com/definition/Secure-Shell">ssh</a> into the virtual computer EC2 instance we created. SSH just stands for Secure SHell, but it's essentially <em>the</em> way to log in to a computer over the internet. Want to log in to your coffee maker? Secure SHell. Want to log in to your Tesla? Secure SHell. Want to log in to your neighbors laptop and break things? You just need to know their username, password, and hostname (ip address). </p>
+  <p><img src="./imgs/aside_0/ec2_instances.png" alt="EC2 Instances"></p>
+  <p>Anyway, Head to your EC2 dashboard, if you can't find it click on "Services, EC2" then
+  "Instances", that should get you to this page. This page allows you to manage your EC2 
+  instances. You can turn them off, turn them on, delete them, or create new ones. We're here 
+  for the <code>hostname</code>. Its Public DNS. Copy it.</p>
+  <p>Now to SSH you need 3 things, a username, password, and hostname. The default EC2 username 
+  is <code>ec2-user</code>, you just copied the hostname, and the password is that <code>.pem
+  </code> file we downloaded. SSH with the command 
+  <code>ssh -i ${MY_PEM_FILE} ${USERNAME}@${HOSTNAME}</code></p><br>
+  <img src="./imgs/aside_0/ssh_pem.png" alt="SSH PEM">
+  <br>
+  <h3>Step 3 - Replacing your PEM file with a password</h3>
+  <p>Most public library computers do not give you terminal access. A lot of them just boot 
+  you into a web browser and don't let you leave it. They're like chromebooks, except you're 
+  stuck running Windows XP and using IE6. This is why we need to remove the PEM file requirement 
+  on our instance. <a href="https://www.serfish.com/console/">serFISH</a> is the only free 
+  browser ssh client I could find, and it does not accept RSA keys.</p><br>
+  <img src="./imgs/aside_0/remove_pem.png" alt="Remove PEM">
+  <br>
+  <p>To get here I followed the directions on 
+    <a href="https://forums.aws.amazon.com/thread.jspa?threadID=258442:wq">this</a> forum post.
+  After changing the <code>PasswordAuthentication</code> line you'll want to set a password for 
+  ec2-user using the command <code>sudo passwd ec2-user</code> and restart the SSH service with 
+  the command <code>sudo systemctl restart sshd</code>. My final terminal looks like this.</p><br>
+  <img src="./imgs/aside_0/config_commands.png" alt="Config Commands">
+  <br>
+  <p>And now we can use serFISH.</p>
+</article>
