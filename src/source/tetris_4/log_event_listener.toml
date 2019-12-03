@@ -1,0 +1,23 @@
+[package]
+name = "tetris"
+version = "0.1.0"
+authors = ["Robert Snakard <robert.snakard@gmail.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = '*'
+gloo-timers = '*'
+gloo-events = '*'
+
+[dependencies.web-sys]
+version = '*'
+features = [
+    'Window',
+    'Document',
+    'Element',
+    'HtmlCanvasElement',
+    'CanvasRenderingContext2d',
+]

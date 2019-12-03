@@ -8,7 +8,7 @@ use pieces::PIECES;
 
 #[derive(Debug, Copy, Clone)]
 enum Tetronimo {
-    Z,
+
     L,
     O,
     S,
@@ -52,13 +52,16 @@ fn draw_piece(ctx: CanvasRenderingContext2d,
               shape: Tetronimo, rot: Rotation,
               xcoord: usize, ycoord: usize) {
 
+    // Draw a square to the screen
+    ctx.set_fill_style(&JsValue::from("red"));
+    ctx.fill_rect(10.0, 10.0, 10.0, 10.0);
 
-    // Get Piece
-    let piece = PIECES[shape as usize]
-                      [rot as usize];
-    ctx.set_fill_style(&JsValue::from(format!(
-        "hsl({}, 50%, 50%)", 45*(shape as usize)
-    )));
+    let piece = [
+        0, 1, 0, 0,
+        1, 1, 1, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+    ];
 
     // Set aside piece dimensions
     const PIECE_WIDTH: usize = 4;

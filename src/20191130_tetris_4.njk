@@ -17,53 +17,85 @@ css: blog.css
     there's some small interval between when we call <code>draw_piece</code> and when that 
     block prints to the screen. People take time too. There's some small interval between 
     when light hits our eyes and when our brain transforms that into an image, about 
-    <a href="https://www.sciencedirect.com/science/article/pii/S0896627309001718">100
+    <a href="https://www.sciencedirect.com/science/article/pii/S0896627309001718"
+       title="Timing, Timing, Timing: Fast Decoding of Object Information from Intracranial Field Potentials in Human Visual Cortex">100
     milliseconds</a> if we go from eyes closed to eyes open. Movies are filmed at 
-    <a href="https://en.wikipedia.org/wiki/Frame_rate">24 frames per second</a>, this means 
+    <a href="https://en.wikipedia.org/wiki/Frame_rate"
+       title="Wikipedia: Frame Rate">24 frames per second</a>, this means 
     our eyes can interpret up to 250ms of movement that we didn't actually see! We're going 
-    to run our game at <a href="https://paulbakaus.com/tutorials/immersion/10-reasons-for-60fps/">
+    to run our game at <a href="https://paulbakaus.com/tutorials/immersion/10-reasons-for-60fps/"
+                          title="10 Reasons for 60 FPS">
     60fps</a>.</p> <br>
-    <img src="imgs/tetris_4/create_game_loop.png" alt="Create Game Loop">
+    <img src="imgs/tetris_4/create_game_loop.png" 
+         alt="lib.rs from the end of the last article. We've imported the package 
+              'gloo-timers' and now call 'Interval::new()' in our run function
+              to loop over a closure 60 times every second. There's also Cargo.toml
+              that adds the gloo-timers package. You can find the source
+              at src/source/tetris_4/create_game_loop.rs and
+              src/source/tetis_4/create_game_loop.toml"
+         title="Create Game Loop">
     <br>
     <p>I used the <code>gloo-timers</code> crate for this part. We could use straight web-sys, 
-    Javascript does have a <a href="https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout">
-    set_timeout function</a> that's <a href="https://docs.rs/web-sys/0.3.21/web_sys/struct.Window.html#method.set_timeout_with_callback_and_timeout_and_arguments_0">
+    Javascript does have a <a href="https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout"
+                              title="MDN setTimeout Documentation">
+    set_timeout function</a> that's <a href="https://docs.rs/web-sys/0.3.21/web_sys/struct.Window.html#method.set_timeout_with_callback_and_timeout_and_arguments_0"
+                                       title="Web-Sys setTimeout Documentation">
     implemented by web-sys</a>, but <code>set_timeout_with_callback_and_timeout_and_arguments_0
-    </code> is really long and anyway, it's <a href="https://github.com/rustwasm/wasm-bindgen/issues/843">
+    </code> is really long and anyway, it's <a href="https://github.com/rustwasm/wasm-bindgen/issues/843"
+                                               title="Hard to pass functions to Web-Sys">
     hard to pass functions to web-sys</a>. </p>
     <p>So add <code>gloo-timers</code> to your <code>Cargo.toml</code> and import it in your 
     <code>src/lib.rs</code>. Then create a <code>Timeout</code>. Like with every crate, you 
-    can find the <a href="https://docs.rs/gloo-timers/0.1.0/gloo_timers/">documentation</a> 
-    for <code>gloo-timers</code> on <a href="https://crates.io/crates/gloo-timers">crates.io</a>,
-    the central hub for all Rust crates. Let's take a look at the <a href="https://docs.rs/gloo-timers/0.1.0/gloo_timers/callback/struct.Timeout.html#method.new">
-    Timeout API</a>. It takes our millisecond delay and a <code>FnOnce</code>, a Closure. </p>
+    can find the <a href="https://docs.rs/gloo-timers/0.1.0/gloo_timers/"
+                    title="Gloo-timers Documentation">documentation</a> 
+    for <code>gloo-timers</code> on <a href="https://crates.io/crates/gloo-timers"
+                                       title="Gloo-timers crates.io">crates.io</a>,
+    the central hub for all Rust crates. Let's take a look at the <a href="https://docs.rs/gloo-timers/0.1.0/gloo_timers/callback/struct.Interval.html#method.new"
+                                                                     title="Interval::new for gloo-timers">
+    Interval API</a>. It takes our millisecond delay and a <code>FnOnce</code>, a Closure. </p>
     <p>Milliseconds is a bit of math. We want to render our game at 60 frames per second 
     and there are 1000 milliseconds in a second. We want to call <code>game_loop</code> 
-    every 1000/60 milliseconds. Comes out to 166ms after integer division. Closure syntax 
+    every 1000/60 milliseconds. Comes out to 16ms after integer division. Closure syntax 
     in Rust is the <code>move || { }</code>, with the code you want to run stuffed in 
     between the curly braces.</p>
     <p>Ok - now we've got a 60fps game loop. Let's do some animation.</p> <br>
-    <img src="imgs/tetris_4/animate_game_loop.png" alt="Animate Game Loop">
+    <img src="imgs/tetris_4/animate_game_loop.png" 
+         alt="We now pass a changing 'tetronimo_depth' variable to our game loop to move the piece every interval.
+              Source can be found on my github at src/source/tetris_4/animate_game_loop.rs"
+         title="Animate Game Loop">
     <br>
     <p>And the result</p><br>
-    <img src="imgs/tetris_4/60fps_tetris.gif" alt="60 FPS Tetris">
+    <img src="imgs/tetris_4/60fps_tetris.gif" 
+         alt="Firefox gif showing the compiled Wasm. Tetris piece falls 10 pixels every 16ms and previous drawings
+              remain on the screen."
+         title="60 FPS Tetris">
     <br>
     <p>...Way too fast and it's this long purple line but hey, we've got an animation!</p>
     <h3>2 - Clear the board and make room for Game State</h3>
     <p>Ok let's take another look at that gif.</p><br>
-    <img src="imgs/tetris_4/60fps_tetris.gif" alt="60 FPS Tetris 2">
+    <img src="imgs/tetris_4/60fps_tetris.gif" 
+         alt="Same gif as the previous image. Firefox showing the compiled Wasm. Tetris
+              piece falls 10 pixels every 16ms and previous drawings remain on the screen."
+         title="60 FPS Tetris 2">
     <br>
     <p>Ah what a beautiful gif. An elegant gif. One of those gifs that just doesn't get 
-    old. Made using <a href="https://www.screentogif.com/">ScreenToGif</a>. It's got an 
+    old. Made using <a href="https://www.screentogif.com/" title="Screen to Gif">ScreenToGif</a>. It's got an 
     MSI installer so you know it's legit. <code>.msi</code> is like the Zune of installer 
     formats. Just as legit as an iPod but nowhere near the street cred of using <code>apt-get 
     install</code>. <code>.exe</code>s are Android.</p>
     <p>So we've got two problems. The first problem is our animation moves too fast. At 
-    level 0 a Tetris piece should <a href="https://en.wikipedia.org/wiki/Tetris#Variations">
+    level 0 a Tetris piece should <a href="https://en.wikipedia.org/wiki/Tetris#Variations"
+                                     title="Wikipedia: Tetris Variations">
     fall one step every 48 frames</a> so we need to implement some kind of speed control. 
     The second problem is the blur. We're not erasing the old Tetris piece before drawing 
     a new one so we just keep drawing pieces on top of each other.</p><br>
-    <img src="imgs/tetris_4/game_state.png" alt="Game State">
+    <img src="imgs/tetris_4/game_state.png" 
+         alt="Two files lib.rs and game.rs. lib.rs we create a GameState struct with two fields,
+              frame_count and ycoord. Every frame we increment clear the board, draw our piece, 
+              and increment frame_count. We increment ycoord every 48 frames. In game.rs we have
+              a clear_board function that draws a black rectangle over our whole canvas. The source
+              can be found on my github at src/source/tetris_4/game_state.rs"
+         title="Game State">
     <br>
     <p>We do a couple things here so let's start at the top of <code>src/lib.rs</code> and 
     work our way down. </p>
@@ -73,7 +105,8 @@ css: blog.css
     we're separating the frame count from the tetris piece's height but we still want to 
     group them together. We could do something like <code>game_loop(&amp;mut frame_count, 
     &amp;mut ycoord);</code>. There's nothing wrong with doing it that way, due to Rust's 
-    focus on <a href="https://www.reddit.com/r/rust/comments/5lg3ih/what_do_rusts_buzzwords_like_safe_and_zerocost/dbvfkyv/">
+    focus on <a href="https://www.reddit.com/r/rust/comments/5lg3ih/what_do_rusts_buzzwords_like_safe_and_zerocost/dbvfkyv/"
+                title="ZeroCost Reddit comment">
     zero-cost abstractions</a> both implementations are the same speed. But when we start 
     adding the score, and the level, and the piece's horizontal position, and all the pieces 
     that are already on the board, well, it's nice to have them all contained in one place.</p>
@@ -95,9 +128,12 @@ css: blog.css
     <code>clear_board</code> borrow <code>ctx</code> you're telling the compiler “I'm still 
     using this”, but if instead you give it to <code>clear_board</code> then <code>clear_board
     </code> owns it, and it can be deleted when <code>clear_board</code> is done with it. 
-    If you found this paragraph interesting you can do more research googling <a href="https://doc.rust-lang.org/1.9.0/book/lifetimes.html">
+    If you found this paragraph interesting you can do more research googling <a href="https://doc.rust-lang.org/1.9.0/book/lifetimes.html"
+                                                                                 title="Rust Book: Lifetimes chapter">
     Rust Lifetimes</a>.</p><br>
-    <img src="imgs/tetris_4/48_frames_animation.gif" alt="48 Frame Animation">
+    <img src="imgs/tetris_4/48_frame_animation.gif" 
+         alt="Firefox gif with tetris piece falling once every 48 frames"
+         title="48 Frame Animation">
     <br>
     <h3>3 - Callbacks</h3>
     <p>Everyone loves callbacks. Call your mom on her birthday? On yours she calls you back.
@@ -105,10 +141,16 @@ css: blog.css
     <code>keydown</code> event listener then push the Right Arrow key on your keyboard? You 
     better hope you're getting a callback otherwise something isn't right with your code and 
     debugging Javascript is a fate worse than death.</p><br>
-    <img src="imgs/tetris_4/log_event_listener.png" alt="Log Event Listener">
+    <img src="imgs/tetris_4/log_event_listener.png" 
+         alt="lib.rs with an event listener registered to a keyboard event. In the listener we call
+              the Javascrip 'console.log' to print the event to the browser console. There's also
+              a 'gloo-events' addition to the Cargo.toml. The source can be found on my github at
+              src/source/tetris_4/log_event_listener.rs and src/source/tetris_4/log_event_listener.toml"
+         title="Log Event Listener">
     <br>
     <p>The first thing we're going to do is create an <code>EventListener</code>. You can 
-    check out the docs for <code>gloo-events</code> <a href="https://crates.io/crates/gloo-events">
+    check out the docs for <code>gloo-events</code> <a href="https://crates.io/crates/gloo-events"
+                                                       title="crates io page for gloo events">
     here</a>, to sum up our <code>target</code> is the browser Window, our event <code>
     type</code> is a <code>keydown</code> event, and our callback is a closure that passes 
     the specific event as an argument. Then we log the event.</p>
@@ -116,43 +158,62 @@ css: blog.css
     but a lot of it is wrong, a lot of it is out of date, and a lot of it is straight up 
     confusing. MDN is a good bet but another easy strategy is just to print it out and let 
     our browser do the heaving lifting for us.</p><br>
-    <img src="imgs/tetris_4/event_listener_logged.png" alt="Event Listener Logged">
+    <img src="imgs/tetris_4/event_listener_logged.png" 
+         alt="Firefox window showing the browser console open and some events logged"
+         title="Event Listener Logged">
     <br>
-    <p>Opening the browser console is <a href="https://balsamiq.com/support/faqs/browserconsole/#mozilla-firefox">
+    <p>Opening the browser console is <a href="https://balsamiq.com/support/faqs/browserconsole/#mozilla-firefox"
+                                         title="Balsamiq page FAQ on the browser console">
     different for every browser</a> but <code>ctrl+shift+i</code> works in a surprising 
     number of cases. After viewing it you can see, keycode for an <code>”ArrowLeft”</code>
     string is 37, and so on. Let's add that to our game:</p><br>
-    <img src="imgs/tetris_4/using_key_codes.png" alt="Using Key Codes">
+    <img src="imgs/tetris_4/using_key_codes.png" 
+         alt="lib.rs again. We've created a function called move piece that gets called by the event listener.
+              This function logs a different string depending on if we push the left or right arrow. The source
+              can be found on my github at src/source/tetris_4/using_key_codes.rs"
+         title="Using Key Codes">
     <br>
     <p>We're finally writing that <code>move_piece</code> function. We'll put it back in 
     <code>src/game.rs</code> by the end of this article but it's here for simplicity&#39;s 
     sake. It's much easier to show what I'm doing if I'm only working in one file.</p>
     <p>A couple things to note. First the use of <code>dyn_ref</code> instead of <code>dyn_into
-    </code>. If you take a look at the <a href="https://docs.rs/gloo-events/0.1.1/gloo_events/struct.EventListener.html#method.new">
-    gloo EventListener docs</a> you'll see the function argument is an <code>&amp;Event</code>,
+    </code>. If you take a look at the <a href="https://docs.rs/gloo-events/0.1.1/gloo_events/struct.EventListener.html#method.new"
+                                          title="Gloo-event docs - specifically the 'EventListener::new()' function">
+    gloo EventListener docs</a> you'll see the closure's function argument is an <code>&amp;Event</code>,
     an event reference. Second is the <code>match</code>. Match is a great way to choose 
     between lots of different options. Right now we've got two (plus the default) but we'll 
-    be adding more for rotating the tetronimo and <a href="https://www.google.com/search?q=tetris+standard+mappings">
+    be adding more for rotating the tetronimo and <a href="https://www.google.com/search?q=tetris+standard+mappings"
+                                                     title="Google search for tetris standard mappings. The featured snippet at the time of writing was particularly relevant">
     various other features</a>.</p>
     <p>Don't forget to add <code>KeyboardEvent</code> to your <code>Cargo.toml</code>!</p>
     <h3>4 - Rc, RefCell, and Fighting the Borrow Checker</h3>
     <p>We've got our event listener working so that's all fine and dandy, but we still need 
     to move the tetris piece. Let's try what we've been doing:</p><br>
-    <img src="imgs/tetris_4/shared_mut.png" alt="Shared Mut">
+    <img src="imgs/tetris_4/shared_mut.png" 
+         alt="Edited move_piece to actually move the piece. It takes in a GameState reference same as game_loop does, 
+              then increments/decrements state.xcoord depending on whether the left or right arrow is pressed. Source
+              can be found on my github at src/source/tetris_4/shared_mut.rs"
+         title="Shared Mut">
     <br>
     <p>Seems like it will work but when we try to compile it </p>
-    <img src="imgs/tetris_4/compile_error.png" alt="Compile Error">
+    <img src="imgs/tetris_4/compile_error.png" 
+         alt="Screenshot of a Cargo compile error in the terminal. It reads 'error[E0382]: use of moved value `state`'"
+         title="Compile Error">
     <br>
-    <p>There's a lot to decode here. And it's all due to Rust's <a href="https://doc.rust-lang.org/1.9.0/book/ownership.html">
-    Ownership</a> and <a href="https://doc.rust-lang.org/1.9.0/book/references-and-borrowing.html">
-    Borrowing</a> rules. And a little thing called <a href="https://en.wikipedia.org/wiki/Synchronization_(computer_science)">
+    <p>There's a lot to decode here. And it's all due to Rust's <a href="https://doc.rust-lang.org/1.9.0/book/ownership.html"
+                                                                   title="Rust book chapter on ownership">
+    Ownership</a> and <a href="https://doc.rust-lang.org/1.9.0/book/references-and-borrowing.html"
+                         title="Rust book chapter on borrowing">
+    Borrowing</a> rules. And a little thing called <a href="https://en.wikipedia.org/wiki/Synchronization_(computer_science)"
+                                                      title="Wikipedia entry on the subject of thread synchronization">
     synchronization</a>.</p>
     <p>Now I'm gonna sit ya'll down for a little lesson in concurrency here. A little 
     lesson in hyper-cores and multi-threading. Close your eyes, sit back, and imagine,
     you've got the number 4. It's a nice pretty 4, all straight lines with that perfect 
     right triangle hypotenuse to complete the package. It's also how much money is in your 
     bank account. Now you're coming home from a hard day's work and you stop by the bank to 
-    deposit your paycheck. You made $5 making <a href="https://www.google.com/search?q=tin+can+telephones">
+    deposit your paycheck. You made $5 making <a href="https://www.google.com/search?q=tin+can+telephones&tbm=isch"
+                                                 title="google image search for tin can telepones">
     tin can telephones</a> today. At the same time your Significant Other stops by the ATM 
     to make a withdrawal. They need $2 for some clothes. I mean yea you'll enjoy them later 
     but still! That's half your paycheck and you haven't even gotten home yet! Anyway those 
@@ -166,26 +227,37 @@ css: blog.css
     The computer does the math and writes $9 back (because 4+5=9), but then your SO's withdrawal 
     does its math. Remember it also read a 4, and 4-2=2. So then the withdrawal writes $2 back 
     where your balance goes, completely erasing the $5 you just deposited!</p>
-    <p>Yes it's a contrived example, it's also the <a href="https://cs.pomona.edu/classes/cs051G/lectures/Lecture40/Lecture40_4.html">
-    classic</a> <a href="https://groups.csail.mit.edu/cag/ps3/lectures/6.189-lecture4-concurrency.pdf">
-    contrived</a> <a href="https://www.cs.princeton.edu/courses/archive/fall14/cos326/lec/19-locks.pdf">
+    <p>Yes it's a contrived example, it's also the <a href="https://cs.pomona.edu/classes/cs051G/lectures/Lecture40/Lecture40_4.html"
+                                                      title="Pomona College slides on the ATM concurrency example">
+    classic</a> <a href="https://groups.csail.mit.edu/cag/ps3/lectures/6.189-lecture4-concurrency.pdf"
+                   title="MIT slides on the ATM concurrency example">
+    contrived</a> <a href="https://www.cs.princeton.edu/courses/archive/fall14/cos326/lec/19-locks.pdf"
+                     title="Princeton slides on the ATM concurrency example">
     example</a>. And it helps explain our Rust error above. We've got a game loop running 
     60 times every second and an event handler that triggers every time we hit a button. 
     At some point there's going to be a collision and Rust is smart enough to know that. 
     So how do we fix it?</p>
-    <p>Well Javascript is actually <a href="https://dev.to/steelvoltage/if-javascript-is-single-threaded-how-is-it-asynchronous-56gd">
-    single threaded</a> and has <a href="http://latentflip.com/loupe/?code=JC5vbignYnV0dG9uJywgJ2NsaWNrJywgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIHNldFRpbWVvdXQoZnVuY3Rpb24gdGltZXIoKSB7CiAgICAgICAgY29uc29sZS5sb2coJ1lvdSBjbGlja2VkIHRoZSBidXR0b24hJyk7ICAgIAogICAgfSwgMjAwMCk7Cn0pOwoKY29uc29sZS5sb2coIkhpISIpOwoKc2V0VGltZW91dChmdW5jdGlvbiB0aW1lb3V0KCkgewogICAgY29uc29sZS5sb2coIkNsaWNrIHRoZSBidXR0b24hIik7Cn0sIDUwMDApOwoKY29uc29sZS5sb2coIldlbGNvbWUgdG8gbG91cGUuIik7!!!PGJ1dHRvbj5DbGljayBtZSE8L2J1dHRvbj4%3D">
-    fake multithreading</a> so we're gonna use <a href="https://manishearth.github.io/blog/2015/05/27/wrapper-types-in-rust-choosing-your-guarantees/#composition">
-    <code>Rc&lt;RefCell&lt;T&gt;&gt;</code></a>. If we had real multithreading we'd use <a href="https://manishearth.github.io/blog/2015/05/27/wrapper-types-in-rust-choosing-your-guarantees/#composition">
+    <p>Well Javascript is actually <a href="https://dev.to/steelvoltage/if-javascript-is-single-threaded-how-is-it-asynchronous-56gd"
+                                      title="DevTo article - If Javascript is Single Threaded how is it Asynchronouos">
+    single threaded</a> and has <a href="http://latentflip.com/loupe/?code=JC5vbignYnV0dG9uJywgJ2NsaWNrJywgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIHNldFRpbWVvdXQoZnVuY3Rpb24gdGltZXIoKSB7CiAgICAgICAgY29uc29sZS5sb2coJ1lvdSBjbGlja2VkIHRoZSBidXR0b24hJyk7ICAgIAogICAgfSwgMjAwMCk7Cn0pOwoKY29uc29sZS5sb2coIkhpISIpOwoKc2V0VGltZW91dChmdW5jdGlvbiB0aW1lb3V0KCkgewogICAgY29uc29sZS5sb2coIkNsaWNrIHRoZSBidXR0b24hIik7Cn0sIDUwMDApOwoKY29uc29sZS5sb2coIldlbGNvbWUgdG8gbG91cGUuIik7!!!PGJ1dHRvbj5DbGljayBtZSE8L2J1dHRvbj4%3D"
+                                   title="Interactive code simulator that demonstrates how Javascript can be single threaded and asynchronous">
+    fake multithreading</a> so we're gonna use <a href="https://manishearth.github.io/blog/2015/05/27/wrapper-types-in-rust-choosing-your-guarantees/#composition"
+                                                  title="Blog post detailing the difference between Rc<RefCell<T>> and Arc<Mutex<T>>">
+    <code>Rc&lt;RefCell&lt;T&gt;&gt;</code></a>. If we had real multithreading we'd use <a href="https://manishearth.github.io/blog/2015/05/27/wrapper-types-in-rust-choosing-your-guarantees/#composition"
+                                                                                           title="Blog post detailing the difference between Rc<RefCell<T>> and Arc<Mutex<T>>">
     <code>Arc&lt;Mutex&lt;T&gt;&gt;</code></a>.</p><br>
-    <img src="imgs/tetris_4/ref_cell_state.png" alt="Ref Cell State">
+    <img src="imgs/tetris_4/ref_cell_state.png" 
+         alt="Same lib.rs as ref_mut except every &mut is replaced with an Rc<RefCell<. Source
+              can be found on my github at src/sourc/tetris_4/ref_cell_state.rs"
+         title="Ref Cell State">
     <br>
     <p>Starting from the top again first we import <code>Rc</code> and <code>RefCell</code>.
     These are the wrapper types we're using and it's important to note that neither of these 
     abstractions are zero-cost. They both have a little bit of overhead in incrementing a 
     reference counter so we want to use as few of them as possible.</p>
     <p>We then create a new <code>Rc&lt;RefCell&lt;GameState&gt;&gt;</code> called <code>
-    state1</code> and we clone it. This <code>clone()</code> is <a href="https://doc.rust-lang.org/std/rc/index.html#cloning-references">
+    state1</code> and we clone it. This <code>clone()</code> is <a href="https://doc.rust-lang.org/std/rc/index.html#cloning-references"
+                                                                   title="Rust docs on Rc<T>. Explains how cloning works">
     Rc's clone</a>. Remember how we were talking about borrowing earlier? And Rust tries 
     to figure out when it can throw away our objects? Well our problem here is we're trying 
     to give our <code>GameState</code> to both the event handler and the game loop. Normally 
@@ -200,11 +272,17 @@ css: blog.css
     and RefCell's job is to enforce Rust's Ownership rules at runtime (either lots of people 
     borrow or one person borrow_muts). It's kind of like the police, as long as your code is 
     correct everything's fine, but you break one rule and RefCell <code>panic!()</code>s.</p><br>
-    <img src="imgs/tetris_4/arrow_handling.gif" alt="Arrow Handling">
+    <img src="imgs/tetris_4/arrow_handling.gif" 
+         alt="Firefox gif showing the tetris piece moving side to side as I press the arrow keys"
+         title="Arrow Handling">
     <br>
     <h3>5 - Organizaion and Rotation</h3>
     <p>Let's finish up this post with a few extra features. And some code cleanup. </p><br>
-    <img src="imgs/tetris_4/code_cleanup.png" alt="Code Cleanup">
+    <img src="imgs/tetris_4/code_cleanup.png" 
+         alt="Show lib.rs and game.rs where we've moved GameState into game.rs. Also created an impl
+              as well as moved game_loop and move_piece into the same file. Source can be found on my
+              github at src/source/tetris_4/code_cleanup.rs"
+         title="Code Cleanup">
     <br>
     <p>First thing we're going to do is move <code>GameState</code> into <code>src/game.rs
     </code>. I mean, GameState is the definitive object of our game. If we don't put it in 
@@ -212,10 +290,13 @@ css: blog.css
     place?</p>
     <p>Moving GameState causes a cascading effect so that by the time our code compiles again 
     you end up with the fully organized code above. We need some way to create a GameState 
-    object. The Rust convention is a <code>new()</code> <a href="https://doc.rust-lang.org/rust-by-example/fn/methods.html">
-    static method</a>. We need to make the GameState <a href="https://doc.rust-lang.org/rust-by-example/mod/visibility.html">
+    object. The Rust convention is a <code>new()</code> <a href="https://doc.rust-lang.org/rust-by-example/fn/methods.html"
+                                                           title="Rust By Example - Creating static and dynamic methods">
+    static method</a>. We need to make the GameState <a href="https://doc.rust-lang.org/rust-by-example/mod/visibility.html"
+                                                        title="Rust By Example - Visibility and 'pub'">
     visible</a> so we <code>pub</code> it. <code>game_loop()</code> now needs to access 
-    <code>GameState</code>'s members but <a href="https://softwareengineering.stackexchange.com/questions/143736/why-do-we-need-private-variables">
+    <code>GameState</code>'s members but <a href="https://softwareengineering.stackexchange.com/questions/143736/why-do-we-need-private-variables"
+                                            title="StackExchange - Why do we need private variables">
     we don't want to <code>pub</code> every member in a struct</a> so instead we move 
     <code>game_loop()</code> to our <code>game</code> module and <code>pub</code> it. Same 
     thing with <code>move_piece()</code>. </p>
@@ -225,11 +306,17 @@ css: blog.css
     import our <code>app</code> module into <code>game</code>. Both cause leaking. I like to 
     keep <code>lib</code> small so I chose to leak <code>app</code> into <code>game</code> 
     a bit.</p><br>
-    <img src="imgs/tetris_4/rotation_increment.png" alt="Rotation Increment">
+    <img src="imgs/tetris_4/rotation_increment.png" 
+         alt="Implemented clockwise and counterclockwise rotation functions for the Rotation enum. Add rotation functionality
+              to GameState and the EventHandler. Source can be found on my github at src/source/tetris_4/rotation_increment.rs"
+         title="Rotation Increment">
     <br>
     <p>If you take a look at <code>src/pieces.rs</code> we have this line <code>*self = match 
     *self {</code>. This here assigns the result of the <code>match</code> to self and is special 
-    to Rust because <a href="https://doc.rust-lang.org/book/ch03-05-control-flow.html?highlight=expression#using-if-in-a-let-statement">
+    to Rust because <a href="https://doc.rust-lang.org/book/ch03-05-control-flow.html?highlight=expression#using-if-in-a-let-statement",
+                       title="Rust Book on the if statement. Included to try and explain what expressions are">
     everything in Rust is an expression</a>. Every other bit of new code you've seen before 
     so I'll leave figuring it out as an exercise for the reader.</p><br>
-    <img src="imgs/tetris_4/wiggling.gif" alt="Wiggling">
+    <img src="imgs/tetris_4/wiggling.gif" 
+         alt="Firefox gif with the piece falling and moving/rotating with the arrow keys I press"
+         title="Wiggling">
